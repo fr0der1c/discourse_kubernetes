@@ -1,0 +1,32 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: discourse-web
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: discourse-web
+    spec:
+      containers:
+      - name: discourse-web
+        image: local_discourse/web_only:latest
+        command: ["/sbin/boot"]
+        ports:
+        - containerPort: 80
+        resources:
+          requests:
+            cpu: 500m
+            memory: 500Mi
+          limits:
+            cpu: 1
+            memory: 1Gi
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: discourse-storage
+          mountPath: /shared
+      volumes:
+      - name: discourse-storage
+        persistentVolumeClaim:
+          claimName: discourse-pv-claim

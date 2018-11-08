@@ -1,0 +1,45 @@
+templates:
+  - "templates/web.template.yml"
+  - "templates/web.china.template.yml" # Replace Ruby repository source
+  - "templates/web.ratelimited.template.yml"
+params:
+  version: stable # Default is test-passed. But we want a more stable version.
+env:
+  LANG: en_US.UTF-8
+  DISCOURSE_DEFAULT_LOCALE: zh_CN
+  UNICORN_WORKERS: 2
+
+  DISCOURSE_DB_USERNAME: 'discourse'
+  DISCOURSE_DB_PASSWORD: 'password'
+  DISCOURSE_DB_HOST: 'your-postgres-ip'
+  DISCOURSE_DB_NAME: discourse
+
+  DISCOURSE_DEVELOPER_EMAILS: 'somebody@gmail.com'
+  
+  DISCOURSE_HOSTNAME: 'example.com'
+
+  # Must use IP instread of service name, since when building image it cannot resolve hostnames.
+  DISCOURSE_REDIS_HOST: 'your-redis-ip'
+  DISCOURSE_REDIS_PASSWORD: 'redis-password'
+
+  DISCOURSE_SMTP_ADDRESS: smtp.mailgun.org         # required
+  DISCOURSE_SMTP_PORT: 2525                   # (optional, default 587)
+  DISCOURSE_SMTP_AUTHENTICATION: login
+  DISCOURSE_SMTP_USER_NAME: 'your-smtp-username'      # required
+  DISCOURSE_SMTP_PASSWORD: 'your-smtp-password'
+  DISCOURSE_SMTP_OPENSSL_VERIFY_MODE: none
+  DISCOURSE_SMTP_ENABLE_START_TLS: true           # (optional, default true)
+
+  DISCOURSE_CDN_URL: https://cdn.example.com
+hooks:
+  after_code:
+    - exec:
+        cd: $home/plugins
+        cmd:
+          # you may add your plugins here
+          - git clone https://github.com/discourse/docker_manager.git
+          - git clone https://github.com/discourse/discourse-solved.git
+          - git clone https://github.com/discourse/discourse-chat-integration.git
+          - git clone https://github.com/discourse/discourse-assign.git
+run:
+  - exec: echo "nothing to customize"
